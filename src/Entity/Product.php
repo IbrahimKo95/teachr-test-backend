@@ -6,6 +6,7 @@ use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -18,14 +19,23 @@ class Product
 
     #[ORM\Column(length: 255)]
     #[Groups(['products'])]
+    #[Assert\NotBlank(message: "Le nom du produit est obligatoire")]
+    #[Assert\Length(min: 2, max: 255,  minMessage: "Le nom du produit doit faire au moins 2 caractères", maxMessage: "Le nom du produit doit faire au maximum 255 caractères")]
+    #[Assert\Type(type: 'string', message: "Le nom du produit doit être une chaîne de caractères")]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['products'])]
+    #[Assert\NotBlank(message: "La description est obligatoire")]
+    #[Assert\Length(min: 2, max: 255,  minMessage: "La description du produit doit faire au moins 2 caractères", maxMessage: "La description du produit doit faire au maximum 255 caractères")]
+    #[Assert\Type(type: 'string', message: "La description du produit doit être une chaîne de caractères")]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Groups(['products'])]
+    #[Assert\NotBlank(message: "Le prix est obligatoire")]
+    #[Assert\Type(type: 'float', message: "Le prix doit être un nombre décimal")]
+    #[Assert\Positive(message: "Le prix doit être un nombre positif")]
     private ?float $price = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
