@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -14,11 +15,14 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['products'])]
+    #[Groups(['products', 'categories'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['products'])]
+    #[Groups(['products', 'categories'])]
+    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire")]
+    #[Assert\Length(min: 2, max: 255,  minMessage: "Le nom de la catégorie doit faire au moins 2 caractères", maxMessage: "Le nom de la catégorie doit faire au maximum 255 caractères")]
+    #[Assert\Type(type: 'string', message: "Le nom de la catégorie doit être une chaîne de caractères")]
     private ?string $name = null;
 
     /**

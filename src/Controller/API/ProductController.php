@@ -57,9 +57,9 @@ class ProductController extends AbstractController
     }
 
     #[Route('/api/products/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['PUT'])]
-    public function update(Request $request, Product $currentBook, SerializerInterface $serializer, EntityManagerInterface $em, CategoryRepository $categoryRepository, ValidatorInterface $validator)
+    public function update(Request $request, Product $currentProduct, SerializerInterface $serializer, EntityManagerInterface $em, CategoryRepository $categoryRepository, ValidatorInterface $validator)
     {
-        $updateProduct = $serializer->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentBook]);
+        $updateProduct = $serializer->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentProduct]);
 
         $errors = $validator->validate($updateProduct);
         if (count($errors) > 0) {
