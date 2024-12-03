@@ -35,6 +35,11 @@ class CategoryController extends AbstractController
     #[Route('/api/categories', methods: ['POST'])]
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator)
     {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['name'])) {
+            return new JsonResponse(['error' => 'Veuillez remplir tous les champs !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
         $category = $serializer->deserialize($request->getContent(), Category::class, 'json');
 
         $errors = $validator->validate($category);
@@ -49,6 +54,9 @@ class CategoryController extends AbstractController
     #[Route('/api/categories/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     public function delete(Category $categories, EntityManagerInterface $em)
     {
+        if (count($categories->getProducts()) > 0) {
+            return new JsonResponse(['error' => 'Vous ne pouvez pas supprimer une catégorie qui contient des produits !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
         $em->remove($categories);
         $em->flush();
         return new JsonResponse(null, 204);
@@ -57,6 +65,12 @@ class CategoryController extends AbstractController
     #[Route('/api/categories/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['PUT'])]
     public function update(Request $request, Category $currentCategory, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator)
     {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['name'])) {
+            return new JsonResponse(['error' => 'Veuillez remplir tous les champs !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $updateCategory = $serializer->deserialize($request->getContent(), Category::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentCategory]);
 
         $errors = $validator->validate($updateCategory);

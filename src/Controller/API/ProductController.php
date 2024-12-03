@@ -34,6 +34,12 @@ class ProductController extends AbstractController
     #[Route('/api/products', methods: ['POST'])]
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, CategoryRepository $categoryRepository, ValidatorInterface $validator)
     {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['name']) || !isset($data['price']) || !isset($data['category_id']) || !isset($data['description'])) {
+            return new JsonResponse(['error' => 'Veuillez remplir tous les champs !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
 
         $errors = $validator->validate($product);
@@ -59,6 +65,12 @@ class ProductController extends AbstractController
     #[Route('/api/products/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['PUT'])]
     public function update(Request $request, Product $currentProduct, SerializerInterface $serializer, EntityManagerInterface $em, CategoryRepository $categoryRepository, ValidatorInterface $validator)
     {
+        $data = json_decode($request->getContent(), true);
+
+        if (!isset($data['name']) || !isset($data['price']) || !isset($data['category_id']) || !isset($data['description'])) {
+            return new JsonResponse(['error' => 'Veuillez remplir tous les champs !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $updateProduct = $serializer->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentProduct]);
 
         $errors = $validator->validate($updateProduct);
