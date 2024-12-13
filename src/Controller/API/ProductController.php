@@ -84,4 +84,16 @@ class ProductController extends AbstractController
         return $this->json($updateProduct, 201, [], ['groups' => 'products']);
     }
 
+    #[Route('/api/products/voiture', methods: ['GET'])]
+    public function getProductWithVoiture(ProductRepository $repository, CategoryRepository $categoryRepository)
+    {
+        $category = $categoryRepository->findBy(["name"=> "Voiture"]);
+        if(!$category || !isset($category)){
+            return new JsonResponse(['error' => 'Catégorie voiture non trouvée !'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+        $products = $repository->findBy(["category" => $category[0]]);
+        return $this->json($products, 200, [], ['groups' => 'products']);
+    }
+
+
 }
